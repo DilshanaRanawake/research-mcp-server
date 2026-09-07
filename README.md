@@ -114,3 +114,35 @@ Normal with fixed-size chunking. If it actually hurts answer quality, switch to 
 
 **`list_papers` returns weird IDs like `1`, `59`, `08818760 s-t`**
 That's just your PDF filenames. Rename the files if you want cleaner names, or pull the real title out of each PDF in `prepare_data.py` instead of using the filename.
+
+## Screenshots
+
+**MCP Inspector — tools connected**
+![Inspector connected, tools listed](assets/inspector-connected.png)
+
+**`list_papers` working in the Inspector**
+![list_papers output in Inspector](assets/inspector-list-papers.png)
+
+**`search_papers` working in the Inspector**
+![search_papers output in Inspector](assets/inspector-search-papers.png)
+
+**`search_papers` with a different query**
+![search_papers second example](assets/inspector-search-papers-2.png)
+
+**Claude Desktop — server failed to start**
+
+This happened when the model/DB were loaded eagerly at import time and the `initialize` handshake timed out (see Common problems and fixes above).
+
+![research-papers showing Failed status](assets/desktop-failed.png)
+
+**Claude Desktop — server running correctly**
+
+After switching to lazy-loading the model and Chroma client.
+
+![research-papers showing Running status](assets/desktop-running.png)
+
+**Claude Desktop — answering from real data**
+![Claude Desktop chat listing papers from the server](assets/desktop-chat-working.png)
+
+**`papers/` folder**
+![papers folder listing](assets/papers-folder.png)
