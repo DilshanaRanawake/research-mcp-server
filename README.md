@@ -106,6 +106,9 @@ Look at the timestamps in the logs. If you see `initialize` sent by the client, 
 **"Add custom connector" dialog wants an HTTPS URL**
 That's for remote MCP servers, not local ones. A local server like this goes in `claude_desktop_config.json` via Settings → Developer → Edit config, not that dialog.
 
+**Edited `claude_desktop_config.json` by hand at `%APPDATA%\Claude\` but Desktop still doesn't see the server**
+If Claude Desktop was installed from the Microsoft Store (MSIX-packaged), it may actually read its config from a different, sandboxed location — something like `%LOCALAPPDATA%\Packages\Claude_<random-id>\LocalCache\Roaming\Claude\claude_desktop_config.json` — not the normal `%APPDATA%\Claude\` path. Editing the wrong file silently does nothing; Desktop just won't see your `mcpServers` block. Avoid this entirely by never guessing the path yourself — always use **Settings → Developer → Edit config** inside Claude Desktop, which opens whichever file it's actually reading.
+
 **`search_papers` returns nothing relevant**
 Check `chunks.json` first — if the PDF text extraction looked garbled in Step 1, fix that before touching the server code.
 
