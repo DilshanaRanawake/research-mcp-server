@@ -1,4 +1,3 @@
-# multimodal-rag-agent
 # Research MCP Server
 
 ## Step 0 — Prerequisites
