@@ -1,0 +1,75 @@
+[
+  {
+    "id": "eval-01",
+    "question": "Who are the authors of the neural machine translation for Sinhala-Tamil thesis?",
+    "expected_keywords": ["Ranathunga", "Tennage"],
+    "must_not_contain": []
+  },
+  {
+    "id": "eval-02",
+    "question": "Why is Sinhala considered a resource-poor language for NLP?",
+    "expected_keywords": ["resource-poor"],
+    "must_not_contain": []
+  },
+  {
+    "id": "eval-03",
+    "question": "Named Entity Recognition for Sinhala language conference paper",
+    "expected_keywords": ["Named Entity Recognition", "Sinhala"],
+    "must_not_contain": []
+  },
+  {
+    "id": "eval-04",
+    "question": "Hidden Markov Model part of speech tagger for Sinhala",
+    "expected_keywords": ["Hidden Markov", "Sinhala"],
+    "must_not_contain": []
+  },
+  {
+    "id": "eval-05",
+    "question": "public datasets for Sinhala NLP Common Crawl Twitter Wikipedia",
+    "expected_keywords": ["Sinhala"],
+    "must_not_contain": []
+  },
+  {
+    "id": "eval-06",
+    "question": "deep learning morphological analysis Sinhala RNN LSTM",
+    "expected_keywords": ["Sinhala", "morpholog"],
+    "must_not_contain": []
+  },
+  {
+    "id": "eval-07",
+    "question": "SLTK tokenizer for Sinhala language",
+    "expected_keywords": ["Sinhala", "Tokenizer"],
+    "must_not_contain": []
+  },
+  {
+    "id": "eval-08",
+    "question": "Sinhala dependency treebank universal dependencies",
+    "expected_keywords": ["Sinhala", "Dependency"],
+    "must_not_contain": []
+  },
+  {
+    "id": "eval-09",
+    "question": "part of speech tag set SVM based tagger Sinhala",
+    "expected_keywords": ["Part-Of-Speech", "Sinhala"],
+    "must_not_contain": []
+  },
+  {
+    "id": "eval-10",
+    "question": "Sinhala offensive language dataset SOLD",
+    "expected_keywords": ["offensive", "Sinhala"],
+    "must_not_contain": []
+  },
+  {
+    "id": "eval-11",
+    "question": "annotated corpus for Tamil and Sinhala emotion analysis",
+    "expected_keywords": ["Emotion", "Sinhala"],
+    "must_not_contain": []
+  },
+  {
+    "id": "eval-12",
+    "question": "latest breakthroughs in quantum computing hardware 2026",
+    "expected_keywords": [],
+    "must_not_contain": ["quantum", "qubit"],
+    "note": "Corpus has nothing to do with this topic. Checks the retriever doesn't surface a coincidentally-matching term for something entirely out of domain."
+  }
+]

@@ -1,0 +1,17 @@
+name: RAG Evaluation Suite
+on: [push, pull_request]
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    env:
+      # server.py defaults this to "1" for Claude Desktop's sake, but CI needs to
+      # actually download the embedding model the first time, so override it here.
+      HF_HUB_OFFLINE: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: pytest test_evals.py -v
