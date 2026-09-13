@@ -2,7 +2,6 @@ venv/
 __pycache__/
 *.pyc
 chroma_store/
-chunks.json
 manifest.json
 *.mcpb
 papers/
