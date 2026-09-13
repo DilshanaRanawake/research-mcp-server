@@ -149,3 +149,85 @@ After switching to lazy-loading the model and Chroma client.
 
 **`papers/` folder**
 ![papers folder listing](assets/papers-folder.png)
+
+
+## Eval suite (added after the fact)
+
+![Eval Suite](https://github.com/DilshanaRanawake/multimodal-rag-agent/actions/workflows/evals.yml/badge.svg)
+
+Went back and added an actual automated eval suite to this instead of just eyeballing
+whether the search results looked right. Same idea as test-driven development, just
+applied to retrieval instead of regular code - write down what "correct" looks like
+first, then run it on every push so nothing silently breaks later.
+
+### What it actually checks
+
+`search_papers` in `server.py` returns raw retrieved passages, not a generated answer -
+so this is testing retrieval quality (did the right content come back for a given
+question), not whether some LLM answered correctly. Simpler than a full generation eval,
+but it's the layer everything else depends on, and it's free and deterministic to test
+since there's no LLM call involved at all.
+
+### Files
+
+- `eval_cases.json` - 12 cases: 11 questions that should pull specific known content
+  out of the indexed papers, plus 1 totally unrelated question to check the retriever
+  doesn't fake a confident match on something not in the corpus at all
+- `run_evals.py` - runs each case, checks the expected keywords show up and the
+  forbidden ones don't
+- `test_evals.py` - same thing as a pytest suite so it plugs into CI
+- `.github/workflows/evals.yml` - installs deps, rebuilds the vector index, runs the
+  suite, on every push/PR
+
+### Proving it actually catches something
+
+Dropped `n_results=3` down to `n_results=1` in `search_papers` on purpose and reran the
+suite locally - `eval-02` failed straight away because the chunk containing
+"resource-poor" got pushed out of the smaller result set. The failure message shows
+exactly why: the returned chunk talks around the concept but the literal phrase isn't in
+it anymore. Put it back to 3, reran, 12/12 again.
+
+![Eval suite catching a real regression](assets/eval-suite-regression-test.png)
+
+### Getting it working in CI (this took a few tries)
+
+First CI run failed immediately - every single case errored out with
+`chromadb.errors.NotFoundError: Collection [research_papers] does not exist`. Turned out
+`chroma_store/` (the actual vector database) is in `.gitignore`, which makes sense since
+it's generated binary data, but it meant a fresh checkout on GitHub's runner had nothing
+to query at all. It worked locally purely because my own machine already had a
+`chroma_store` sitting there from running `build_index.py` ages ago.
+
+Fixed it by making CI rebuild the index itself before running tests, from `chunks.json`
+(the intermediate JSON output of `prepare_data.py`, small and plain text, safe to
+commit). Except `chunks.json` was *also* being caught by `.gitignore` - had to pull it
+out of the ignore list and explicitly track it. Added one line to the workflow
+(`python build_index.py` before pytest) and it built the index fresh and all 12 cases
+passed on the actual runner.
+
+Kept `papers/` (the raw PDFs) and `chroma_store/` (the generated DB) out of git - no
+reason to commit those - but `chunks.json` now stays tracked specifically so CI has
+something to rebuild from without needing the original PDFs at all.
+
+### Setup
+
+```bash
+pip install -r requirements.txt
+python build_index.py
+python -m pytest test_evals.py -v
+```
+
+(had to use `python -m pytest` instead of a bare `pytest` locally since the installed
+script wasn't on my Windows PATH - works fine either way)
+
+`server.py` sets `HF_HUB_OFFLINE=1` by default so Claude Desktop doesn't try to phone
+home to Hugging Face on startup, but GitHub Actions needs to actually download the
+embedding model the first time, so the workflow overrides that env var back to `"0"`.
+
+### Honest limitation
+
+Keyword matching is blunt - a correct answer phrased differently would fail this, and a
+wrong answer that happens to contain the right words would pass. Good enough to prove
+the whole pipeline works end to end though. If I build on this more, next step is
+swapping the keyword check for an LLM-as-judge call that actually reads the retrieved
+content and decides if it's relevant, instead of doing string matching.
